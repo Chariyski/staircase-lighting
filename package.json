@@ -1,0 +1,18 @@
+{
+  "name": "smart-stairs",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "CC-NC-ND",
+  "devDependencies": {
+    "watch": "^0.19.1"
+  },
+  "dependencies": {
+    "node-pixel": "^0.6.1",
+    "suncalc": "^1.7.0"
+  }
+}

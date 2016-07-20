@@ -1,0 +1,9 @@
+# Ignore IntelliJ project and settings files
+.idea
+
+# npm and bower
+node_modules
+src/public/vendor
+
+# Ignore files and folders
+src/models/staircase.json
