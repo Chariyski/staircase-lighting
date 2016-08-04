@@ -12,6 +12,7 @@
     "watch": "^0.19.1"
   },
   "dependencies": {
+    "johnny-five": "^0.9.62",
     "node-pixel": "^0.6.1",
     "suncalc": "^1.7.0"
   }

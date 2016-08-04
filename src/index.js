@@ -5,6 +5,17 @@ var staircaseModel = require('./models/staircase');
 var opts = {};
 opts.port = process.argv[2] || '';
 
+// TODO
+function delay(milliseconds) {
+  return function (result) {
+    return new Promise(function (resolve, reject) {
+      setTimeout(function () {
+        resolve(result);
+      }, milliseconds);
+    });
+  };
+}
+
 function StaircaseLighting(options) {
   if (!options) {
     options = {};
@@ -18,7 +29,7 @@ function StaircaseLighting(options) {
 
 }
 
-StaircaseLighting.getModel = function(){
+StaircaseLighting.getModel = function () {
   return staircaseModel;
 };
 
@@ -75,6 +86,75 @@ StaircaseLighting.prototype.setWorkMode = function (workMode) {
   return this;
 };
 
+// Animation modes
+
+// TODO decouple from stair - there should be fromPixel and toPixel parameters
+StaircaseLighting.prototype.pixelByPixel = function (stair, pixelD, direction) {
+  var pixelDelay = pixelD === undefined ? 0 : pixelD;
+  var pixelPromises = [];
+  var pixels = stair.getPixels();
+  var that = this;
+
+  if (direction !== undefined) { // TODO
+    pixels.reverse();
+  }
+
+  pixels.forEach(function (element, index) {
+    pixelPromises.push(delay(pixelDelay * index)(index)
+      .then(function (index) {
+        console.log(stair._position + ' - ' + element);
+        that.strip.pixel(element).color(that.getColor());
+        that.strip.show();
+
+        return stair._position + ' - ' + element;
+      }));
+  });
+
+  return Promise.all(pixelPromises);
+};
+
+StaircaseLighting.prototype.stairByStair = function (direction) {
+  // TODO https://github.com/ajfisher/node-pixel/issues/41#issuecomment-154572775
+
+  var stairDelay = 2000; // TODO remove magic numbers after finishing with the prototype
+  var that = this;
+  var stairs = this.stairs.slice(); // TODO check if all functions are pure !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  var stairsPromises = [];
+
+  if (direction !== undefined) { // TODO
+    stairs.reverse();
+  }
+
+  stairs.forEach(function (stair, index) {
+    var stairPromise;
+
+    stairPromise = delay(stairDelay * index)(index)
+      .then(function (index) {
+        var pixelDelay = (stairDelay / stair.length);
+        var pixels = stair.getPixels();
+
+        if (that.getAnimationMode() === 'none') {
+          for (var i = 0; i < pixels.length; i++) {
+            that.strip.pixel(pixels[i]).color(that.getColor());
+          }
+
+          that.strip.show();
+
+          return 'TODO';
+        } else {
+          return that.pixelByPixel(stair, pixelDelay / 2, direction); //TODO remove magic numbers
+        }
+
+      }).then(function (values) {
+        console.log(values);
+        return values;
+      });
+    stairsPromises.push(stairPromise);
+  });
+
+  return Promise.all(stairsPromises);
+};
+
 // Work modes
 
 StaircaseLighting.prototype.on = function () {
@@ -94,35 +174,21 @@ StaircaseLighting.prototype.off = function () {
   }, 100); // TODO check why the strip need this delay
 };
 
-// Animation modes
-
-StaircaseLighting.prototype.stairByStair = function () {
+StaircaseLighting.prototype.sensor = function () {
   var that = this;
-  var stairs = this.stairs;
-  var stairsPromises = [];
 
-  // TODO refactor this hell :D
-  stairs.forEach(function (stair, index) {
-    var stairPromise = new Promise(function (resolve, reject) {
-      setTimeout(function (stair) {
-        for (var j = 0; j < stair.length; j++) {
-          that.strip.pixel(stair.from + j).color(that.color);
-        }
-        that.strip.show();
-
-        console.log(stair._position);
-        resolve(stair);
-      }, 1000 * index, stairs[index]);
+  this.stairByStair()
+    .then(function (values) {
+      console.log('All stairs are lighted');
+      return 'All stairs are lighted';
+    })
+    .then(function (result) {
+      return delay(2000)('index');
+    })
+    .then(function () {
+      that.setColor('#000000');
+      that.stairByStair(true);
     });
-
-    stairsPromises.push(stairPromise);
-  });
-
-  // TODO return
-  Promise.all(stairsPromises).then(function (values) {
-    console.log(values);
-    that.off();
-  });
 };
 
 // Methods
