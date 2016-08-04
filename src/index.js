@@ -17,20 +17,35 @@ function delay(milliseconds) {
 }
 
 function StaircaseLighting(options) {
-  if (!options) {
-    options = {};
-  }
+  Object.assign(this, staircaseModel, options);
 
-  this.stairs = staircaseModel.stairs;
-  this.color = options.color || '#ffffff';
-  this.workMode = options.workMode || staircaseModel.workModes[0];
-  this.animationMode = options.animationMode || staircaseModel.animationModes[0];
   this._initBoard();
 
+  // Strip mock for developing without hardware
+  // this.strip = {
+  //   color: function () {},
+  //   pixel: function () {
+  //     return this;
+  //   },
+  //   show: function () {},
+  //   off: function () {},
+  // };
 }
 
 StaircaseLighting.getModel = function () {
-  return staircaseModel;
+  return Object.assign({}, staircaseModel);
+};
+
+StaircaseLighting.prototype.getAllPixels = function () {
+  var stairs = this.getStairs();
+
+  pixels = stairs.map(function (stair) {
+    return stair.getPixels();
+  }).reduce(function (previousValue, currentValue) {
+    return previousValue.concat(currentValue);
+  }, []);
+
+  return pixels;
 };
 
 StaircaseLighting.prototype.getAnimationMode = function () {
@@ -38,11 +53,23 @@ StaircaseLighting.prototype.getAnimationMode = function () {
 };
 
 StaircaseLighting.prototype.getAnimationModes = function () {
-  return staircaseModel.animationModes;
+  return this.animationModes.slice();
 };
 
 StaircaseLighting.prototype.getColor = function () {
   return this.color;
+};
+
+StaircaseLighting.prototype.getPixelDelay = function () {
+  return this.pixelDelay;
+};
+
+StaircaseLighting.prototype.getStairs = function () {
+  return this.stairs.slice();
+};
+
+StaircaseLighting.prototype.getStairDelay = function () {
+  return this.stairDelay;
 };
 
 StaircaseLighting.prototype.getWorkMode = function () {
@@ -50,7 +77,7 @@ StaircaseLighting.prototype.getWorkMode = function () {
 };
 
 StaircaseLighting.prototype.getWorkModes = function () {
-  return staircaseModel.workModes;
+  return this.workModes.slice();
 };
 
 StaircaseLighting.prototype.setAnimationMode = function (animationMode) {
@@ -75,6 +102,28 @@ StaircaseLighting.prototype.setColor = function (color) {
   return this;
 };
 
+StaircaseLighting.prototype.setPixelDelay = function (pixelDelay) {
+  if (typeof pixelDelay !== 'number') {
+    console.error('"pixelDelay" should be number');
+    return;
+  }
+
+  this.pixelDelay = pixelDelay;
+
+  return this;
+};
+
+StaircaseLighting.prototype.setStairsDelay = function (stairDelay) {
+  if (typeof stairDelay !== 'number') {
+    console.error('"stairDelay" should be number');
+    return;
+  }
+
+  this.stairDelay = stairDelay;
+
+  return this;
+};
+
 StaircaseLighting.prototype.setWorkMode = function (workMode) {
   if (typeof workMode !== 'string') {
     console.error('"workMode" should be string');
@@ -86,85 +135,24 @@ StaircaseLighting.prototype.setWorkMode = function (workMode) {
   return this;
 };
 
-// Animation modes
+// Methods
 
-// TODO decouple from stair - there should be fromPixel and toPixel parameters
-StaircaseLighting.prototype.pixelByPixel = function (stair, pixelD, direction) {
-  var pixelDelay = pixelD === undefined ? 0 : pixelD;
-  var pixelPromises = [];
-  var pixels = stair.getPixels();
-  var that = this;
-
-  if (direction !== undefined) { // TODO
-    pixels.reverse();
-  }
-
-  pixels.forEach(function (element, index) {
-    pixelPromises.push(delay(pixelDelay * index)(index)
-      .then(function (index) {
-        console.log(stair._position + ' - ' + element);
-        that.strip.pixel(element).color(that.getColor());
-        that.strip.show();
-
-        return stair._position + ' - ' + element;
-      }));
-  });
-
-  return Promise.all(pixelPromises);
+StaircaseLighting.prototype.runAnimation = function () {
+  this[this.getAnimationMode()]();
 };
 
-StaircaseLighting.prototype.stairByStair = function (direction) {
-  // TODO https://github.com/ajfisher/node-pixel/issues/41#issuecomment-154572775
+StaircaseLighting.prototype.start = function () {
+  var workModeOverwrite = this[this.getWorkMode()];
+  this.strip.off();
 
-  var stairDelay = 2000; // TODO remove magic numbers after finishing with the prototype
-  var that = this;
-  var stairs = this.stairs.slice(); // TODO check if all functions are pure !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  var stairsPromises = [];
-
-  if (direction !== undefined) { // TODO
-    stairs.reverse();
-  }
-
-  stairs.forEach(function (stair, index) {
-    var stairPromise;
-
-    stairPromise = delay(stairDelay * index)(index)
-      .then(function (index) {
-        var pixelDelay = (stairDelay / stair.length);
-        var pixels = stair.getPixels();
-
-        if (that.getAnimationMode() === 'none') {
-          for (var i = 0; i < pixels.length; i++) {
-            that.strip.pixel(pixels[i]).color(that.getColor());
-          }
-
-          that.strip.show();
-
-          return 'TODO';
-        } else {
-          return that.pixelByPixel(stair, pixelDelay / 2, direction); //TODO remove magic numbers
-        }
-
-      }).then(function (values) {
-        console.log(values);
-        return values;
-      });
-    stairsPromises.push(stairPromise);
-  });
-
-  return Promise.all(stairsPromises);
-};
-
-// Work modes
-
-StaircaseLighting.prototype.on = function () {
-  if (this.getAnimationMode() === 'none') {
-    this.strip.color(this.getColor());
-    this.strip.show();
+  if (workModeOverwrite) {
+    workModeOverwrite();
   } else {
     this.runAnimation();
   }
 };
+
+// Work modes overwriters
 
 StaircaseLighting.prototype.off = function () {
   var that = this;
@@ -177,32 +165,89 @@ StaircaseLighting.prototype.off = function () {
 StaircaseLighting.prototype.sensor = function () {
   var that = this;
 
-  this.stairByStair()
-    .then(function (values) {
-      console.log('All stairs are lighted');
-      return 'All stairs are lighted';
-    })
-    .then(function (result) {
-      return delay(2000)('index');
-    })
-    .then(function () {
-      that.setColor('#000000');
-      that.stairByStair(true);
-    });
+  if (this.getAnimationMode() === 'stairByStair') {
+    this.stairByStair()
+      .then(function (values) {
+        console.log('All stairs are lighted');
+        return 'All stairs are lighted';
+      })
+      .then(function (result) {
+        return delay(2000)('index');
+      })
+      .then(function () {
+        that.setColor('#000000');
+        that.stairByStair('backwards');
+      });
+  } else {
+    this.runAnimation();
+  }
 };
 
-// Methods
+// Animation modes
 
-StaircaseLighting.prototype.runAnimation = function () {
-  this[this.getAnimationMode()]();
+StaircaseLighting.prototype.noAnimation = function () {
+  this.strip.color(this.getColor());
+  this.strip.show();
 };
 
-StaircaseLighting.prototype.start = function () {
-  this.strip.off();
+StaircaseLighting.prototype.pixelByPixel = function (pixels) {
+  var that = this;
+  var pixelPromises = [];
+  var initialDelay = that.getPixelDelay();
 
-  console.log('this.getWorkMode()', this.getWorkMode());
-  this[this.getWorkMode()]();
+  if (pixels === undefined) {
+    pixels = this.getAllPixels();
+  }
+
+  pixels.forEach(function (element, index) {
+    var pixelDelay = initialDelay * index;
+
+    pixelPromises.push(delay(pixelDelay)(index)
+      .then(function (index) {
+        that.strip.pixel(element).color(that.getColor()); // TODO check if color() is chainable.
+        that.strip.show();
+
+        console.log(element);
+        return element;
+      }));
+  });
+
+  return Promise.all(pixelPromises);
 };
+
+StaircaseLighting.prototype.stairByStair = function (direction) {
+  var that = this;
+  var stairs = direction === 'backwards' ? this.getStairs().reverse() : this.getStairs();
+  var initialDelay = that.getStairDelay();
+  var stairsPromises = [];
+
+  stairs.forEach(function (stair, index) {
+    var stairDelay = initialDelay * index;
+
+    var stairPromise = delay(stairDelay)(index)
+      .then(function (index) {
+        var pixels = stair.getPixels();
+
+        for (var i = 0; i < pixels.length; i++) {
+          that.strip.pixel(pixels[i]).color(that.getColor());
+        }
+
+        that.strip.show();
+
+        return stair.getPixels();
+
+      }).then(function (values) {
+        console.log(values);
+        return values;
+      });
+
+    stairsPromises.push(stairPromise);
+  });
+
+  return Promise.all(stairsPromises);
+};
+
+// Private
 
 StaircaseLighting.prototype._initBoard = function () {
   var that = this;
