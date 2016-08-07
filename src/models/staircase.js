@@ -10,9 +10,11 @@ var getPixels = function () {
 module.exports = {
   animationModes: ['noAnimation', 'stairByStair', 'pixelByPixel'],
 
-  pixelDelay: 50,
+  color: '#ffffff',
 
-  stairDelay:2000,
+  pixelDelay: 30,
+
+  stairDelay: 1000,
 
   stairs: [{
     _position: 'first',
@@ -29,7 +31,19 @@ module.exports = {
     length: 10,
     from: 20,
     getPixels: getPixels
+  }, {
+    _position: 'fourth',
+    length: 10,
+    from: 30,
+    getPixels: getPixels
+  }, {
+    _position: 'fifth',
+    length: 10,
+    from: 40,
+    getPixels: getPixels
   }],
+
+  stripLength: 50,
 
   workModes: ['off', 'on', 'sensor']
 };

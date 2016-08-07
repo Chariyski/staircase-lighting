@@ -142,21 +142,22 @@ StaircaseLighting.prototype.runAnimation = function () {
 };
 
 StaircaseLighting.prototype.start = function () {
-  var workModeOverwrite = this[this.getWorkMode()];
+  var workMode = this.getWorkMode();
   this.strip.off();
 
-  if (workModeOverwrite) {
-    workModeOverwrite();
+  if (this[workMode]) {
+    this[workMode]();
   } else {
     this.runAnimation();
   }
 };
 
-// Work modes overwriters
+// Work modes overwrites
 
 StaircaseLighting.prototype.off = function () {
   var that = this;
   setTimeout(function () {
+
     that.strip.color('#000000');
     that.strip.show();
   }, 100); // TODO check why the strip need this delay
@@ -204,7 +205,7 @@ StaircaseLighting.prototype.pixelByPixel = function (pixels) {
 
     pixelPromises.push(delay(pixelDelay)(index)
       .then(function (index) {
-        that.strip.pixel(element).color(that.getColor()); // TODO check if color() is chainable.
+        that.strip.pixel(element).color(that.getColor());
         that.strip.show();
 
         console.log(element);
@@ -256,6 +257,7 @@ StaircaseLighting.prototype._initBoard = function () {
   this.board.on('ready', function () {
     console.log('Board ready, lets add light');
     that._initStrip();
+    that._initFirstFloorMotionSensor();
   });
 
   this.board.on('exit', function () {
@@ -269,7 +271,7 @@ StaircaseLighting.prototype._initStrip = function () {
 
   this.strip = new pixel.Strip({
     data: 6,
-    length: 30, // TODO
+    length: staircaseModel.stripLength,
     color_order: pixel.COLOR_ORDER.BRG,
     board: that.board,
     controller: 'FIRMATA'
@@ -279,6 +281,25 @@ StaircaseLighting.prototype._initStrip = function () {
     this.color('#000000');
     this.show();
     console.log('Strip ready, let\'s go');
+  });
+};
+
+StaircaseLighting.prototype._initFirstFloorMotionSensor = function () {
+  var that = this;
+  var motion = new five.Motion(7);
+
+  motion.on('calibrated', function () {
+    console.log('First floor motion sensor is calibrated');
+  });
+
+  motion.on('motionstart', function () {
+    console.log('First floor motion sensor start');
+    that.stairByStair();
+  });
+
+  motion.on('motionend', function () {
+    console.log('First floor motion sensor end');
+    that.off();
   });
 };
 
