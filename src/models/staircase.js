@@ -10,8 +10,11 @@ var getPixels = function (stair) {
   return pixels;
 };
 
+var animationModes = ['stairByStair', 'pixelByPixel', 'noAnimation'];
 var staircaseConfig = {
-  animationModes: ['noAnimation', 'stairByStair', 'pixelByPixel'],
+  animationMode: animationModes[0],
+
+  animationModes: animationModes,
 
   color: '#ffffff',
 
@@ -43,7 +46,7 @@ var staircaseConfig = {
 
   stripLength: 50,
 
-  workModes: ['off', 'on', 'sensor']
+  workModes: ['off', 'on', 'auto']
 };
 
 staircaseConfig.stairs.forEach(function (stair) {
