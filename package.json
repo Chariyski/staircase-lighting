@@ -2,13 +2,15 @@
   "name": "smart-stairs",
   "version": "0.0.0",
   "description": "",
-  "main": "src/index.js",
   "scripts": {
+    "lint": "eslint src/**/*.js",
     "start": "node src/index.js"
   },
   "author": "",
   "license": "CC-NC-ND",
   "devDependencies": {
+    "eslint": "^3.2.2",
+    "eslint-config-chariyski": "^3.0.0",
     "watch": "^0.19.1"
   },
   "dependencies": {

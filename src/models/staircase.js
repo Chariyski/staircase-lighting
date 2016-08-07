@@ -1,13 +1,16 @@
 'use strict';
-var getPixels = function () {
+
+var getPixels = function (stair) {
   var pixels = [];
-  for (var i = 0; i < this.length; i++) {
-    pixels.push(this.from + i);
+  var i = 0;
+
+  for (i; i < stair.length; i++) {
+    pixels.push(stair.from + i);
   }
   return pixels;
 };
 
-module.exports = {
+var staircaseConfig = {
   animationModes: ['noAnimation', 'stairByStair', 'pixelByPixel'],
 
   color: '#ffffff',
@@ -19,31 +22,32 @@ module.exports = {
   stairs: [{
     _position: 'first',
     length: 10,
-    from: 0,
-    getPixels: getPixels
+    from: 0
   }, {
     _position: 'second',
     length: 10,
-    from: 10,
-    getPixels: getPixels
+    from: 10
   }, {
     _position: 'third',
     length: 10,
-    from: 20,
-    getPixels: getPixels
+    from: 20
   }, {
     _position: 'fourth',
     length: 10,
-    from: 30,
-    getPixels: getPixels
+    from: 30
   }, {
     _position: 'fifth',
     length: 10,
-    from: 40,
-    getPixels: getPixels
+    from: 40
   }],
 
   stripLength: 50,
 
   workModes: ['off', 'on', 'sensor']
 };
+
+staircaseConfig.stairs.forEach(function (stair) {
+  stair.getPixels = getPixels.bind(null, stair);
+});
+
+module.exports = staircaseConfig;
