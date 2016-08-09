@@ -10,17 +10,18 @@ var getPixels = function (stair) {
   return pixels;
 };
 
-var animationModes = ['stairByStair', 'pixelByPixel', 'noAnimation'];
 var staircaseConfig = {
-  animationMode: animationModes[0],
-
-  animationModes: animationModes,
+  animationModes: ['stairByStair', 'pixelByPixel', 'noAnimation'],
 
   color: '#ffffff',
 
-  pixelDelay: 30,
+  direction: true, // for now the direction will be true if it is from "start" to "end" of the strip
+
+  pixelDelay: 50,
 
   stairDelay: 1000,
+
+  staircaseDelay: 15000,
 
   stairs: [{
     _position: 'first',
@@ -46,7 +47,7 @@ var staircaseConfig = {
 
   stripLength: 50,
 
-  workModes: ['off', 'on', 'auto']
+  workModes: ['auto', 'off', 'on']
 };
 
 staircaseConfig.stairs.forEach(function (stair) {
