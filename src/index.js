@@ -11,8 +11,18 @@ opts.port = process.argv[2] || '';
 function StaircaseLighting(options) {
   Object.assign(this, staircaseModel, options);
 
-  this.animationMode = staircaseModel.animationModes[0];
-  this.workMode = staircaseModel.workModes[0];
+  if (!this.color) {
+    this.color = staircaseModel.color;
+  }
+
+  if (!this.animationMode) {
+    this.animationMode = staircaseModel.animationModes[0];
+  }
+
+  if (!this.workMode) {
+    this.workMode = staircaseModel.workModes[0];
+  }
+
   this._initBoard();
 
   // Strip mock for developing without hardware
@@ -32,10 +42,6 @@ function StaircaseLighting(options) {
   // this.setDirection(!this.getDirection());
   // this._motionSensorHandler();
 }
-
-StaircaseLighting.getModel = function () {
-  return Object.assign({}, staircaseModel);
-};
 
 StaircaseLighting.prototype.getAllPixels = function () {
   var stairs = this.getStairs();
@@ -189,8 +195,8 @@ StaircaseLighting.prototype.off = function () {
 
 
 // TODO
- StaircaseLighting.prototype.auto = function () {
-   return;
+StaircaseLighting.prototype.auto = function () {
+  return;
 //   var that = this;
 //
 //   if (this.getAnimationMode() === 'stairByStair') {
@@ -210,7 +216,7 @@ StaircaseLighting.prototype.off = function () {
 //   } else {
 //     this.runAnimation();
 //   }
- };
+};
 
 // Animation modes
 
