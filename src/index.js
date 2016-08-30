@@ -40,7 +40,6 @@ function StaircaseLighting(options) {
   //
   // this.setAnimationMode('stairByStair');
   // this.setDirection(!this.getDirection());
-  // this._motionSensorHandler();
 }
 
 StaircaseLighting.prototype.getAllPixels = function () {
@@ -291,7 +290,6 @@ StaircaseLighting.prototype._initBoard = function () {
   this.board.on('ready', function () {
     console.log('Board ready, lets add light');
     that._initStrip();
-    that._initFirstFloorMotionSensor();
   });
 
   this.board.on('exit', function () {
@@ -315,45 +313,6 @@ StaircaseLighting.prototype._initStrip = function () {
     that.strip.show();
     console.log('Strip ready, let\'s go');
   });
-};
-
-StaircaseLighting.prototype._initFirstFloorMotionSensor = function () {
-  var that = this;
-
-  this.firstFloorMotionSensor = new five.Motion(7);
-
-  this.firstFloorMotionSensor.on('calibrated', function () {
-    that._isStaircaseLightedFromMotionSensor = false;
-    console.log('First floor motion sensor is calibrated');
-  });
-
-  this.firstFloorMotionSensor.on('motionstart', function () {
-    if (that.getWorkMode() !== 'auto') {
-      return;
-    }
-
-    console.log('First floor motion sensor start');
-    that._motionSensorHandler();
-  });
-
-  // this.firstFloorMotionSensor.on('motionend', function () {);
-};
-
-StaircaseLighting.prototype._motionSensorHandler = function (delay) {
-  var that = this;
-  var timeout = delay || this.getStaircaseDelay();
-
-  if (this._isStaircaseLightedFromMotionSensor !== true) {
-    this.runAnimation();
-  }
-
-  clearTimeout(this._motionSensorTimeout); // TODO clear the timeout when the workMode is change
-
-  this._isStaircaseLightedFromMotionSensor = true;
-  this._motionSensorTimeout = setTimeout(function () {
-    that.off();
-    that._isStaircaseLightedFromMotionSensor = false;
-  }, timeout);
 };
 
 StaircaseLighting.prototype._stairByStair = function (callback) {
