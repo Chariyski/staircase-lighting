@@ -176,7 +176,6 @@ StaircaseLighting.prototype.runWorkMode = function () {
   }
 };
 
-// TODO remove if unneeded
 StaircaseLighting.prototype.start = function () {
   this.strip.off();
   this.runWorkMode();
@@ -190,31 +189,6 @@ StaircaseLighting.prototype.off = function () {
   this.setColor('#000000');
   this.runAnimation();
   this.setColor(currentStripColor);
-};
-
-
-// TODO
-StaircaseLighting.prototype.auto = function () {
-  return;
-//   var that = this;
-//
-//   if (this.getAnimationMode() === 'stairByStair') {
-//     this.stairByStair()
-//       .then(function (values) {
-//         return 'All stairs are turned on';
-//       })
-//       .then(function (result) {
-//         console.log(result);
-//
-//         return helpers.delay(2000)();
-//       })
-//       .then(function () {
-//         that.setColor('#000000');
-//         that.stairByStair('backwards');
-//       });
-//   } else {
-//     this.runAnimation();
-//   }
 };
 
 // Animation modes

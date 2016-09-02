@@ -47,7 +47,7 @@ var staircaseConfig = {
 
   stripLength: 50,
 
-  workModes: ['auto', 'off', 'on']
+  workModes: ['off', 'on']
 };
 
 staircaseConfig.stairs.forEach(function (stair) {
