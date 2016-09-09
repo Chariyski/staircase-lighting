@@ -8,6 +8,9 @@
   },
   "author": "",
   "license": "CC-NC-ND",
+  "engines": {
+    "node": ">=6.5.0"
+  },
   "devDependencies": {
     "eslint": "^3.2.2",
     "eslint-config-chariyski": "^3.0.0",

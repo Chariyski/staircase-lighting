@@ -1,29 +1,28 @@
 'use strict';
 
-var getPixels = function (stair) {
-  var pixels = [];
-  var i = 0;
+function getPixels(stair) {
+  const pixels = [];
 
-  for (i; i < stair.length; i++) {
+  for (let i = 0; i < stair.length; i++) {
     pixels.push(stair.from + i);
   }
   return pixels;
-};
+}
 
-var staircaseConfig = {
-  animationModes: ['stairByStair', 'pixelByPixel', 'noAnimation'],
+const staircaseConfig = {
+  _animationModes: ['stairByStair', 'pixelByPixel', 'noAnimation'],
 
-  color: '#ffffff',
+  _color: '#ffffff',
 
-  direction: true, // for now the direction will be true if it is from "start" to "end" of the strip
+  _direction: true, // for now the direction will be true if it is from "start" to "end" of the strip
 
-  pixelDelay: 50,
+  _pixelDelay: 100, // TODO check min stable delay
 
-  stairDelay: 1000,
+  _stairDelay: 1000,
 
-  staircaseDelay: 15000,
+  _staircaseDelay: 15000,
 
-  stairs: [{
+  _stairs: [{
     _position: 'first',
     length: 10,
     from: 0
@@ -45,12 +44,12 @@ var staircaseConfig = {
     from: 40
   }],
 
-  stripLength: 50,
+  _stripLength: 50,
 
-  workModes: ['off', 'on']
+  _workModes: ['off', 'on']
 };
 
-staircaseConfig.stairs.forEach(function (stair) {
+staircaseConfig._stairs.forEach((stair) => {
   stair.getPixels = getPixels.bind(null, stair);
 });
 

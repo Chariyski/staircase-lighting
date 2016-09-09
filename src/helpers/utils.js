@@ -2,8 +2,8 @@
 
 function delay(milliseconds) {
   return function (result) {
-    return new Promise(function (resolve, reject) {
-      setTimeout(function () {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
         resolve(result);
       }, milliseconds);
     });
@@ -11,5 +11,5 @@ function delay(milliseconds) {
 }
 
 module.exports = {
-  delay: delay
+  delay
 };
