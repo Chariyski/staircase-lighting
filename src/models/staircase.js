@@ -10,7 +10,7 @@ function getPixels(stair) {
 }
 
 const staircaseConfig = {
-  _animationModes: ['stairByStair', 'pixelByPixel', 'noAnimation'],
+  _animationModes: ['stairByStair', 'pixelByPixel', 'middleToEnd', 'noAnimation'],
 
   _color: '#ffffff',
 

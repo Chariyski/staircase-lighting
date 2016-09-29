@@ -15,18 +15,18 @@ class StaircaseLighting {
     this._initBoard();
 
     // Strip mock for developing without hardware
-    // this.strip = {
-    //   color() {
-    //   },
-    //   pixel() {
-    //     return this;
-    //   },
-    //   show() {
-    //   },
-    //   off() {
-    //   }
-    // };
-    // this.direction = !this.direction;
+    //this.strip = {
+    //  color() {
+    //  },
+    //  pixel() {
+    //    return this;
+    //  },
+    //  show() {
+    //  },
+    //  off() {
+    //  }
+    //};
+    //this.direction = !this.direction;
   }
 
   get allPixels() {
@@ -187,6 +187,43 @@ class StaircaseLighting {
     this.strip.show();
   }
 
+  middleToEnd() {
+    const stripColor = this.color;
+    const initialDelay = this.pixelDelay;
+
+    const stairsPromises = this._stairByStair((stair) => {
+      const pixels = stair.getPixels();
+
+      pixels.forEach((pixel, index, array) => {
+        let pixelDelay;
+
+        if (index < array.length / 2) {
+          pixelDelay = initialDelay * (array.length / 2 - index);
+        } else {
+          pixelDelay = initialDelay * (array.length / 2 - index - 1) * -1;
+        }
+
+        helpers.delay(pixelDelay)(index)
+          .then(() => {
+            this.strip.pixel(pixel).color(stripColor);
+            this.strip.show();
+
+            console.log(pixel);
+            return pixel;
+          });
+      });
+      return stair;
+    });
+
+    stairsPromises.forEach((stairPromise) => {
+      stairPromise.then((stair) => {
+        console.log(`${stair._position} stair`);
+      });
+    });
+
+    return Promise.all(stairsPromises);
+  }
+
   pixelByPixel(pixelArray) {
     const pixelPromises = [];
     const initialDelay = this.pixelDelay;
@@ -201,16 +238,16 @@ class StaircaseLighting {
       pixels.reverse();
     }
 
-    pixels.forEach((element, index) => {
+    pixels.forEach((pixel, index) => {
       const pixelDelay = initialDelay * index;
 
       pixelPromises.push(helpers.delay(pixelDelay)(index)
         .then(() => {
-          this.strip.pixel(element).color(stripColor);
+          this.strip.pixel(pixel).color(stripColor);
           this.strip.show();
 
-          console.log(element);
-          return element;
+          console.log(pixel);
+          return pixel;
         }));
     });
 
