@@ -2,7 +2,7 @@
 
 const helpers = require('./helpers/utils');
 const five = require('johnny-five');
-const pixel = require('./../node_modules/node-pixel/lib/pixel.js');
+const nodePixel = require('./../node_modules/node-pixel/lib/pixel.js');
 const staircaseModel = require('./models/staircase');
 const opts = {};
 
@@ -15,18 +15,18 @@ class StaircaseLighting {
     this._initBoard();
 
     // Strip mock for developing without hardware
-    //this.strip = {
-    //  color() {
-    //  },
-    //  pixel() {
-    //    return this;
-    //  },
-    //  show() {
-    //  },
-    //  off() {
-    //  }
-    //};
-    //this.direction = !this.direction;
+    // this.strip = {
+    //   color() {
+    //   },
+    //   pixel() {
+    //     return this;
+    //   },
+    //   show() {
+    //   },
+    //   off() {
+    //   }
+    // };
+    this.direction = !this.direction;
   }
 
   get allPixels() {
@@ -188,40 +188,11 @@ class StaircaseLighting {
   }
 
   middleToEnd() {
-    const stripColor = this.color;
-    const initialDelay = this.pixelDelay;
+    return this._mirrorLighting();
+  }
 
-    const stairsPromises = this._stairByStair((stair) => {
-      const pixels = stair.getPixels();
-
-      pixels.forEach((pixel, index, array) => {
-        let pixelDelay;
-
-        if (index < array.length / 2) {
-          pixelDelay = initialDelay * (array.length / 2 - index);
-        } else {
-          pixelDelay = initialDelay * (array.length / 2 - index - 1) * -1;
-        }
-
-        helpers.delay(pixelDelay)(index)
-          .then(() => {
-            this.strip.pixel(pixel).color(stripColor);
-            this.strip.show();
-
-            console.log(pixel);
-            return pixel;
-          });
-      });
-      return stair;
-    });
-
-    stairsPromises.forEach((stairPromise) => {
-      stairPromise.then((stair) => {
-        console.log(`${stair._position} stair`);
-      });
-    });
-
-    return Promise.all(stairsPromises);
+  endToMiddle() {
+    return this._mirrorLighting(false);
   }
 
   pixelByPixel(pixelArray) {
@@ -294,10 +265,10 @@ class StaircaseLighting {
   _initStrip() {
     const that = this;
 
-    this.strip = new pixel.Strip({
+    this.strip = new nodePixel.Strip({
       data: 6,
       length: staircaseModel._stripLength,
-      color_order: pixel.COLOR_ORDER.BRG,
+      color_order: nodePixel.COLOR_ORDER.BRG,
       board: that.board,
       controller: 'FIRMATA'
     });
@@ -326,6 +297,50 @@ class StaircaseLighting {
     });
 
     return stairsPromises;
+  }
+
+  _mirrorLighting(direction) {
+    const stripColor = this.color;
+    const initialDelay = this.pixelDelay;
+
+    const stairsPromises = this._stairByStair((stair) => {
+      const pixels = stair.getPixels();
+      const reversedPixels = stair.getPixels().reverse();
+      const middlePixel = pixels.length / 2;
+      let pixelDelay = initialDelay;
+      let startPixelIndex = 0;
+      let endPixelIndex = parseInt(middlePixel, 10);
+
+      if (!direction) {
+        startPixelIndex = parseInt(middlePixel, 10);
+        endPixelIndex = pixels.length - 1;
+      }
+
+      for (let i = startPixelIndex; i <= endPixelIndex; i++) {
+        const pixel = pixels[i];
+        const revertPixel = reversedPixels[i];
+
+        pixelDelay += initialDelay;
+
+        helpers.delay(pixelDelay)()
+          .then(() => {
+            this.strip.pixel(pixel).color(stripColor);
+            this.strip.pixel(revertPixel).color(stripColor);
+            this.strip.show();
+
+            return pixel;
+          });
+      }
+      return stair;
+    });
+
+    stairsPromises.forEach((stairPromise) => {
+      stairPromise.then((stair) => {
+        console.log(`${stair._position} stair`);
+      });
+    });
+
+    return Promise.all(stairsPromises);
   }
 }
 
