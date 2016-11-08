@@ -26,7 +26,6 @@ class StaircaseLighting {
     //   off() {
     //   }
     // };
-    this.direction = !this.direction;
   }
 
   get allPixels() {
@@ -311,7 +310,7 @@ class StaircaseLighting {
       let startPixelIndex = 0;
       let endPixelIndex = parseInt(middlePixel, 10);
 
-      if (!direction) {
+      if (direction === false) {
         startPixelIndex = parseInt(middlePixel, 10);
         endPixelIndex = pixels.length - 1;
       }
