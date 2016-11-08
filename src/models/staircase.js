@@ -25,9 +25,9 @@ const staircaseConfig = {
 
   _direction: true, // for now the direction will be true if it is from "start" to "end" of the strip
 
-  _pixelDelay: 100, // TODO check min stable delay
+  _pixelDelay: 50, // TODO check min stable delay
 
-  _stairDelay: 1000,
+  _stairDelay: 500,
 
   _staircaseDelay: 15000,
 
@@ -42,58 +42,58 @@ const staircaseConfig = {
   }, {
     _position: 'third',
     length: 10,
-    from: 18
+    from: 16
   }, {
     _position: 'fourth',
     length: 10,
-    from: 28
+    from: 26
   }, {
     _position: 'fifth',
     length: 10,
-    from: 38
+    from: 36
   }, {
     _position: 'sixth',
     length: 10,
-    from: 48
+    from: 46
   }, {
     _position: 'seventh',
     length: 10,
-    from: 58
+    from: 56
   }, {
     _position: 'eight',
     length: 10,
-    from: 68
+    from: 66
   }, {
     _position: 'night',
     length: 10,
-    from: 78
+    from: 76
   }, {
     _position: 'tenth',
     length: 10,
-    from: 88
+    from: 86
   }, {
     _position: 'eleventh',
     length: 10,
-    from: 98
+    from: 96
   }, {
     _position: 'twelfth',
     length: 10,
-    from: 108
+    from: 106
   }, {
     _position: 'thirteenth',
     length: 10,
-    from: 118
+    from: 116
   }, {
     _position: 'fourteenth',
     length: 7,
-    from: 125
+    from: 126
   }, {
     _position: 'fifteenth',
     length: 10,
-    from: 135
+    from: 133
   }],
 
-  _stripLength: calculateStripLength(this._stairs),
+  _stripLength: 143,
 
   _workModes: ['off', 'on']
 };
