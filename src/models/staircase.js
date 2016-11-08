@@ -19,7 +19,7 @@ function calculateStripLength(stairs) {
 }
 
 const staircaseConfig = {
-  _animationModes: ['stairByStair', 'pixelByPixel', 'noAnimation'],
+  _animationModes: ['stairByStair', 'pixelByPixel', 'middleToEnd', 'endToMiddle', 'noAnimation'],
 
   _color: '#ffffff',
 
