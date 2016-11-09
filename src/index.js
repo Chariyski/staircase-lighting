@@ -191,7 +191,7 @@ class StaircaseLighting {
   }
 
   endToMiddle() {
-    return this._mirrorLighting(false);
+    return this._mirrorLighting('reverse');
   }
 
   pixelByPixel(pixelArray) {
@@ -307,12 +307,12 @@ class StaircaseLighting {
       const reversedPixels = stair.getPixels().reverse();
       const middlePixel = pixels.length / 2;
       let pixelDelay = initialDelay;
-      let startPixelIndex = 0;
-      let endPixelIndex = parseInt(middlePixel, 10);
+      let startPixelIndex = parseInt(middlePixel, 10);
+      let endPixelIndex = pixels.length - 1;
 
-      if (direction === false) {
-        startPixelIndex = parseInt(middlePixel, 10);
-        endPixelIndex = pixels.length - 1;
+      if (direction === 'reverse') {
+        startPixelIndex = 0;
+        endPixelIndex = parseInt(middlePixel, 10);
       }
 
       for (let i = startPixelIndex; i <= endPixelIndex; i++) {
