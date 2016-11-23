@@ -204,7 +204,7 @@ class StaircaseLighting {
       pixels = this.allPixels;
     }
 
-    if (!this.direction) {
+    if (this.direction === 'bottomToTop') {
       pixels.reverse();
     }
 
@@ -280,7 +280,7 @@ class StaircaseLighting {
   }
 
   _stairByStair(callback) {
-    const stairs = this.direction ? this.stairs : this.stairs.reverse();
+    const stairs = this.direction === 'topToBottom'? this.stairs : this.stairs.reverse();
     const initialDelay = this.stairDelay;
     const stairsPromises = [];
 
@@ -310,7 +310,7 @@ class StaircaseLighting {
       let startPixelIndex = parseInt(middlePixel, 10);
       let endPixelIndex = pixels.length - 1;
 
-      if (direction === 'reverse') {
+      if (direction === 'bottomToTop') {
         startPixelIndex = 0;
         endPixelIndex = parseInt(middlePixel, 10);
       }
