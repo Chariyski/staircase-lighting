@@ -186,12 +186,28 @@ class StaircaseLighting {
     this.strip.show();
   }
 
-  middleToEnd() {
-    return this._mirrorLighting();
+  christmas() {
+    if (this.animationMode !== this.christmas.name) {
+      return;
+    }
+
+    const pixels = this.allPixels;
+
+    pixels.forEach((pixel, index) => {
+      this.strip.pixel(pixel).color(helpers.randomColor());
+    });
+
+    this.strip.show();
+
+    setTimeout(this.christmas.bind(this), this._stairDelay);
   }
 
   endToMiddle() {
     return this._mirrorLighting('reverse');
+  }
+
+  middleToEnd() {
+    return this._mirrorLighting();
   }
 
   pixelByPixel(pixelArray) {
@@ -280,7 +296,7 @@ class StaircaseLighting {
   }
 
   _stairByStair(callback) {
-    const stairs = this.direction === 'topToBottom'? this.stairs : this.stairs.reverse();
+    const stairs = this.direction === 'topToBottom' ? this.stairs : this.stairs.reverse();
     const initialDelay = this.stairDelay;
     const stairsPromises = [];
 

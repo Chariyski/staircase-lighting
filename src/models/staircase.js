@@ -24,13 +24,13 @@ function getStripLength(stairs) {
 const staircaseConfig = {
   _animationMode: ['noAnimation'],
 
-  _animationModes: ['stairByStair', 'pixelByPixel', 'middleToEnd', 'endToMiddle', 'noAnimation'],
+  _animationModes: ['christmas', 'endToMiddle', 'middleToEnd', 'noAnimation', 'pixelByPixel', 'stairByStair'],
 
   _color: '#ffffff',
 
   _direction: 'bottomToTop',
 
-  _directions: ['topToBottom', 'bottomToTop'],
+  _directions: ['bottomToTop', 'topToBottom'],
 
   /*
    Each neopixels is 10bytes in terms of message handling etc so 10 x ~150 = ~1500 bytes = ~12000bps.
