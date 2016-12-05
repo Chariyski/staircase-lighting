@@ -194,7 +194,7 @@ class StaircaseLighting {
     const pixels = this.allPixels;
 
     pixels.forEach((pixel, index) => {
-      this.strip.pixel(pixel).color(helpers.randomColor());
+      this.strip.pixel(pixel).color(helpers.randomChristmasColors());
     });
 
     this.strip.show();
