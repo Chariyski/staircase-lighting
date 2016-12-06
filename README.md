@@ -1,6 +1,22 @@
-## State of the project
+# Staircase lighting with ws2811 led strip.
 
-Currently this is just a proof of concept with some dirty code :laughing:
+## Demo
+Coming soon
+
+## How to use it
+- download the repo
+- edit src/models/staircase.js according your stairs and preferences
+- require staircase-lighting/src/index.js file in your code
+- create new instance:
+```
+const staircase = new StaircaseLight({
+  color: '#ededed'
+});
+```
+- Turn on the lights: `staircase.start();`
+
+You can change the work mode with: `staircase.workMode = 'on';` and the animation with: `staircase.animationMode = 'endToMiddle';`
+The avalable options can be found in [options](./src/models/staircase.js) file.
 
 ## License
 
