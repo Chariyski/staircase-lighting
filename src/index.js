@@ -165,7 +165,6 @@ class StaircaseLighting {
   }
 
   start() {
-    this.strip.off();
     this.runWorkMode();
   }
 
@@ -188,6 +187,12 @@ class StaircaseLighting {
 
   christmas() {
     if (this.animationMode !== this.christmas.name) {
+      return;
+    }
+
+    if (this.workMode === 'off') {
+      this.strip.color('#000000');
+      this.strip.show();
       return;
     }
 
