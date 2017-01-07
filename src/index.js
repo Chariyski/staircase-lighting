@@ -331,7 +331,7 @@ class StaircaseLighting {
       let startPixelIndex = parseInt(middlePixel, 10);
       let endPixelIndex = pixels.length - 1;
 
-      if (direction === 'bottomToTop') {
+      if (direction === 'reverse') {
         startPixelIndex = 0;
         endPixelIndex = parseInt(middlePixel, 10);
       }
